@@ -4,6 +4,7 @@ import styled, { css } from 'styled-components';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
+import Swal from 'sweetalert2'
 
 interface LabelInterface {
   isBold?:boolean;
@@ -29,24 +30,13 @@ const TextWrapper = styled.div`
 
 const CardForm = styled.div`
   display: grid;
-  grid-column-start: 2;
   justify-content: center;
+  align-items: center;
+  grid-column-start: 2;
   margin-top: 10px;
 
 `;
 
-const ButtonGroup = styled.div`
-  display: flex;
-  justify-content: center;
-  margin-top: 25px;
-
-`;
-
-const ButtonList = styled.div`
-  display: flex;
-  grid-gap: small;
-
-`;
 interface StyledInputProps {
   type: string;
 }
@@ -80,12 +70,30 @@ const LinkBot = styled(Link)`
   text-decoration: none;
 `;
 
+const ButtonList = styled.div`
+  display: flex;
+  justify-content: center;
+`;
+
+const Buttons = styled.button`
+  margin-top: 3rem;
+  background: #303f9f;
+  text-align: center;
+  width: 100px;
+  height: 40px;
+  border-radius: 5px;
+  border: none;
+  color: #ffff;
+`;
+
   function Login() {
-    // const navigate = useNavigate();
+    const navigate = useNavigate();
   
     const schema = yup.object({
-      username: yup.string().required(),
-      password: yup.string().required()
+      Username: yup.string().required(),
+      Password: yup.string()
+        .required()
+        .matches(/^\d{6,}$/, 'รหัสผ่านต้องเป็นตัวเลขอย่างน้อย 6 ตัว'),
     }).required();
   
     const {
@@ -100,55 +108,92 @@ const LinkBot = styled(Link)`
       console.log('error : ', error);
     }
   
-    function onSubmit(item: any) {
-      console.log('item : ', item);
-      if (item) {
-        const data: any = {
-          ...item
-        };
-  
-        console.log('data : ', data);
+    async function onSubmit(item: any) {
+      try {
+        const response = await fetch('http://localhost:7000/apis/creatLogin', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(item),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          Swal.fire({
+            icon: 'success',
+            title: 'สำเร็จ',
+            text: 'เข้าสู่ระบบสำเร็จ!',
+          });
+          navigate("/resetPassword");
+        } else {
+          if (data.Log === 2) {
+            Swal.fire({
+              icon: 'error',
+              title: 'เกิดข้อผิดพลาด',
+              text: 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง',
+            }).then(() => {
+              navigate("/");
+            });
+          } else {
+            Swal.fire({
+              icon: 'error',
+              title: 'เกิดข้อผิดพลาด',
+              text: data.RespMessage || 'Unknown error',
+            });
+          }
+        }
+      } catch (error) {
+        console.error('Error during API request:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'เกิดข้อผิดพลาด!',
+          text: 'มีปัญหาในการติดต่อกับเซิร์ฟเวอร์',
+        });
       }
     }
-  
-    // useEffect(() => {
-    //   navigate('/');
-    // }, []);
-  
+
     return (
         <CardWrapper>
           <TextWrapper>
             <Label isBold>Login</Label>
           </TextWrapper>
-          <form onSubmit={handleSubmit(onSubmit, onError)}>
+          <form onSubmit={handleSubmit(onSubmit, onError)} 
+            action="http://localhost:7000/apis/creatLogin" 
+            method="post">
             <CardForm>
-              <Label htmlFor="username">
-                Username
+              <Label htmlFor="Username">
+                Username (Email)
               </Label>
               <StyledInput
-                id='username'
-                type='text'
-                placeholder={('Username')}
+                id='Username'
+                type='email'
+                placeholder={('Username (Email)')}
                 required
-                {...register('username')}
+                {...register('Username')}
               />
-              <Label htmlFor="password">
+               {errors.Username && (
+                  <span style={{ color: 'red' }}>{errors.Username.message}</span>
+                )}
+              <Label htmlFor="Password">
                 Password
               </Label>
               <StyledInput
-                id='password'
+                id='Password'
                 type='password'
                 placeholder={('Password')}
                 required
-                {...register('password')}
+                {...register('Password')}
               />
+              {errors.Password && (
+                <span style={{ color: 'red' }}>{errors.Password.message}</span>
+              )}
             </CardForm>
-            <ButtonGroup>
-              <ButtonList>
-                <button color='success' type='submit'>{('login')}</button>
-              </ButtonList>
-            </ButtonGroup>
-            <LinkBot to = ''>forget password ?</LinkBot>
+            <ButtonList>
+              <Buttons type="submit">{"Login"}</Buttons>
+            </ButtonList>
+            {/* <LinkBot to = ''>forget password ?</LinkBot> */}
           </form>
         </CardWrapper>
     );
