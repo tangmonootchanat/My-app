@@ -42,6 +42,8 @@ interface StyledInputProps {
 }
 
 const StyledInput = styled.input<StyledInputProps>`
+  padding: 10px;
+  border-radius: 6px;
   width: 250px;
   margin-bottom: -1px;
 `;
