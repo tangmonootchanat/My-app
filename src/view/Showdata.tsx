@@ -23,15 +23,7 @@ const Td = styled.td`
   padding: 10px;
 `;
 
-const Button = styled.button`
-  background-color: #d1e119;
-  color: rebeccapurple;
-  padding: 8px 10px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-top: 10px;
-`;
+
 interface Item {
   id: number;
   email: string;
