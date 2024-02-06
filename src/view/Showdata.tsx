@@ -1,4 +1,5 @@
 import React,{useState , useEffect} from 'react'
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 const TableContainer = styled.div`
@@ -35,7 +36,7 @@ interface Item {
   id: number;
   email: string;
 }
-function Resetpassword() {
+function Showdata() {
   const [data, setData] = useState<Item[]>([]);
   useEffect(() => {
     fetchData();
@@ -57,15 +58,11 @@ function Resetpassword() {
     console.error('Error fetching data:', error);
   }
   };
-  const ButtonClick = () => {
-    // Add logic for the outside button click
-    console.log('Outside button clicked');
-  };
 
 
   return (
     <TableContainer>
-      <h2>Data Table</h2>
+      <h2>User Storge</h2>
       <StyledTable>
         <thead>
           <tr>
@@ -78,21 +75,20 @@ function Resetpassword() {
             data.map((item) => (
               <tr key={item.id}>
                 <Td>{item.email}</Td>
-                <Td><button>Edit</button></Td>
+                <Td><Link to ={`/Resetpassword/${item.id}`}>
+                <button>Resetpassword</button>
+                </Link></Td>
               </tr>
             ))
           ) : (
             <tr>
-              <Td colSpan={2}>No data available</Td>
+              <Td colSpan={2}>No User available</Td>
             </tr>
           )}
         </tbody>
       </StyledTable>
-
-      {/* Button outside the table */}
-      <Button onClick={ButtonClick}>Button</Button>
     </TableContainer>
   );
 }
 
-export default Resetpassword
+export default Showdata

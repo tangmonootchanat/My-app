@@ -13,6 +13,8 @@ function App() {
       <Routes>
       <Route path='/' element={<Register />} />
       <Route path='/Showdata' element={<Showdata/>}/>
+      <Route path='/Registers' element={<Register />} />
+      <Route path='/Resetpassword/:id' element={<Resetpassword />} />
       </Routes>
     </Router>
   )
