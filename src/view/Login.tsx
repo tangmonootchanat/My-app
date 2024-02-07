@@ -16,7 +16,7 @@ const CardWrapper = styled.div`
   background:rgba(255, 255, 255, 0.7);
   border-radius: 20px;
   box-shadow: 1px 2px 8px rgba(100, 100, 100, 0.65);
-  height: 410px;
+  height: 70vh;
   margin: 6rem auto 8.1rem auto;
   width: 400px;
 
@@ -128,7 +128,7 @@ const Buttons = styled.button`
             title: 'สำเร็จ',
             text: 'เข้าสู่ระบบสำเร็จ!',
           });
-          navigate("/resetPassword");
+          navigate("/Showdata");
         } else {
           if (data.Log === 2) {
             Swal.fire({
@@ -195,7 +195,7 @@ const Buttons = styled.button`
             <ButtonList>
               <Buttons type="submit">{"Login"}</Buttons>
             </ButtonList>
-            {/* <LinkBot to = ''>forget password ?</LinkBot> */}
+            <LinkBot to = '/Register'>Create Account ?</LinkBot>
           </form>
         </CardWrapper>
     );
