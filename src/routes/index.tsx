@@ -5,6 +5,7 @@ import {
 import Register from '../view/Register';
 import Login from '../view/Login';
 import Resetpassword from '../view/Resetpassword';
+import Showdata from '../view/Showdata';
 
 function App() {
   return (
@@ -12,7 +13,8 @@ function App() {
       <Routes>
         <Route path='/' element={<Login />} />
         <Route path='/Register' element={<Register />} />
-        <Route path='/Resetpassword' element={<Resetpassword />}/>
+        <Route path='/Resetpassword/:Id' element={<Resetpassword />} />
+        <Route path='/Showdata' element={<Showdata/>}/>
       </Routes>
     </Router>
   )

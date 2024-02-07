@@ -71,11 +71,11 @@ function Register() {
 const navigate = useNavigate();
 const schema = yup
     .object({
-     email:yup.string().required(),
-     password:yup.string().required(),
+     Username:yup.string().required(),
+     Password:yup.string().required(),
      confirmPassword: yup.string()
       .required()
-      .oneOf([yup.ref('password'), null as any],'Passwords do not match')
+      .oneOf([yup.ref('Password'), null as any],'Passwords do not match')
       .nullable(),
     })
     .required();
@@ -133,27 +133,27 @@ async function onSubmit(item: any) {
       <form onSubmit={handleSubmit(onSubmit,onError)}>
           <ContainerText>Sing Up</ContainerText>
           <ComponentInput>
-             <Labels>Email</Labels>
+             <Labels>Username (Email)</Labels>
              <StyledInput
-                id='email'
-                type='email'
-                placeholder='Email'
+                id='Username'
+                type='Username'
+                placeholder='Username'
                 required
-                {...register('email')}
+                {...register('Username')}
                />
-                {errors.email && <ErrorMessage>{errors.email.message}</ErrorMessage>}
+                {errors.Username && <ErrorMessage>{errors.Username.message}</ErrorMessage>}
                 <Labels>Password</Labels>
              <StyledInput
-                id='password'
-                type='password'
+                id='Password'
+                type='Password'
                 placeholder='Password'
-                {...register('password')}
+                {...register('Password')}
                />
-                {errors.password && <ErrorMessage>{errors.password.message}</ErrorMessage>}
+                {errors.Password && <ErrorMessage>{errors.Password.message}</ErrorMessage>}
                 <Labels>ConfirmPassword</Labels>
              <StyledInput
                 id='confirmPassword'
-                type='password'
+                type='Password'
                 placeholder='Confirmpassword'
                 {...register('confirmPassword')}
                /> 
