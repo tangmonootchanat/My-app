@@ -19,13 +19,11 @@ const CardWrapper = styled.div`
   height: 70vh;
   margin: 6rem auto 8.1rem auto;
   width: 400px;
-
 `;
 
 const TextWrapper = styled.div`
   display: grid;
   grid-column-start: 1;
-
 `;
 
 const CardForm = styled.div`
@@ -34,12 +32,10 @@ const CardForm = styled.div`
   align-items: center;
   grid-column-start: 2;
   margin-top: 10px;
-
 `;
-
 interface StyledInputProps {
   type: string;
-}
+};
 
 const StyledInput = styled.input<StyledInputProps>`
   padding: 8px;
@@ -99,115 +95,119 @@ const ErrorMessage = styled.span`
   margin-top: 5px;
 `;
 
-  function Login() {
-    const navigate = useNavigate();
-  
-    const schema = yup.object({
-      Username: yup.string().required(),
-      Password: yup.string()
-        .required()
-        .matches(/^\d{6,}$/, 'รหัสผ่านต้องเป็นตัวเลขอย่างน้อย 6 ตัว'),
-    }).required();
-  
-    const {
-      register,
-      handleSubmit,
-      formState: { errors },
-    } = useForm({
-      resolver: yupResolver(schema),
-    });
+function Login() {
+  const navigate = useNavigate();
 
-    function onError(error: any) {
-      console.log('error : ', error);
-    }
-  
-    async function onSubmit(item: any) {
-      try {
-        const response = await fetch('http://localhost:7000/apis/creatLogin', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(item),
-        });
+  const schema = yup.object({
+    Username: yup.string().required(),
+    Password: yup.string()
+      .required()
+      .matches(/^\d{6,}$/, 'รหัสผ่านต้องเป็นตัวเลขอย่างน้อย 6 ตัว'),
+  }).required();
 
-        const data = await response.json();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
 
-        if (response.ok) {
-          Swal.fire({
-            icon: 'success',
-            title: 'สำเร็จ',
-            text: 'เข้าสู่ระบบสำเร็จ!',
-          });
-          navigate("/Showdata");
-        } else {
-          if (data.Log === 2) {
-            Swal.fire({
-              icon: 'error',
-              title: 'เกิดข้อผิดพลาด',
-              text: 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง',
-            }).then(() => {
-              navigate("/");
-            });
-          } else {
-            Swal.fire({
-              icon: 'error',
-              title: 'เกิดข้อผิดพลาด',
-              text: data.RespMessage || 'Unknown error',
-            });
-          }
-        }
-      } catch (error) {
-        console.error('Error during API request:', error);
-        Swal.fire({
-          icon: 'error',
-          title: 'เกิดข้อผิดพลาด!',
-          text: 'มีปัญหาในการติดต่อกับเซิร์ฟเวอร์',
-        });
-      }
-    }
-
-    return (
-        <CardWrapper>
-          <TextWrapper>
-            <Label isBold>Login</Label>
-          </TextWrapper>
-          <form onSubmit={handleSubmit(onSubmit, onError)}>
-            <CardForm>
-              <Label htmlFor="Username">
-                Username (Email)
-              </Label>
-              <StyledInput
-                id='Username'
-                type='email'
-                placeholder={('Username (Email)')}
-                required
-                {...register('Username')}
-              />
-              {errors.Username && <ErrorMessage>{errors.Username.message}</ErrorMessage>}
-              <Label htmlFor="Password">
-                Password
-              </Label>
-              <StyledInput
-                id='Password'
-                type='password'
-                placeholder={('Password')}
-                required
-                {...register('Password')}
-              />
-              {errors.Password && <ErrorMessage>{errors.Password.message}</ErrorMessage>}
-            </CardForm>
-            <ButtonList>
-              <Buttons type="submit">{"Login"}</Buttons>
-            </ButtonList>
-            <Links>
-              <LinkBot to = '/Register'>Create Account ?</LinkBot>
-              {/* <LinkBot to = '/ForgetPassword'>Forget Password ?</LinkBot> */}
-            </Links>
-          </form>
-        </CardWrapper>
-    );
+  function onError(error: any) {
+    console.log('error : ', error);
   }
+  async function onSubmit(item: any) {
+    try {
+      const response = await fetch('http://localhost:7000/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(item),
+      });
   
+      const data = await response.json();
+  
+      if (response.ok) {
+        Swal.fire({
+          icon: 'success',
+          title: 'สำเร็จ',
+          text: 'เข้าสู่ระบบสำเร็จ!',
+        }).then(() => {
+          navigate("/Showdata");
+        });
+      } else {
+        if (response.status === 401) {
+          Swal.fire({
+            icon: 'error',
+            title: 'เกิดข้อผิดพลาด',
+            text: 'ชื่อผู้ใช้ หรือ รหัสผ่านไม่ถูกต้อง',
+          }).then(() => {
+            navigate("/");
+          });
+        } else if (response.status === 404) {
+          Swal.fire({
+            icon: 'error',
+            title: 'เกิดข้อผิดพลาด',
+            text: 'ไม่พบบัญชีผู้ใช้',
+          });
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'เกิดข้อผิดพลาด',
+            text: data.error || response.statusText || 'Unknown error',
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Error during API request:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'เกิดข้อผิดพลาด!',
+        text: 'มีปัญหาในการติดต่อกับเซิร์ฟเวอร์',
+      });
+    }
+  }
+   
+  return (
+    <CardWrapper>
+      <TextWrapper>
+        <Label isBold>Login</Label>
+      </TextWrapper>
+      <form onSubmit={handleSubmit(onSubmit, onError)}>
+        <CardForm>
+          <Label htmlFor="Username">
+            Username (Email)
+          </Label>
+          <StyledInput
+            id='Username'
+            type='email'
+            placeholder={('Username (Email)')}
+            required
+            {...register('Username')}
+          />
+          {errors.Username && <ErrorMessage>{errors.Username.message}</ErrorMessage>}
+          <Label htmlFor="Password">
+            Password
+          </Label>
+          <StyledInput
+            id='Password'
+            type='password'
+            placeholder={('Password')}
+            required
+            {...register('Password')}
+          />
+          {errors.Password && <ErrorMessage>{errors.Password.message}</ErrorMessage>}
+        </CardForm>
+        <ButtonList>
+          <Buttons type="submit">{"Login"}</Buttons>
+        </ButtonList>
+        <Links>
+          <LinkBot to = '/Register'>Create Account ?</LinkBot>
+        </Links>
+      </form>
+    </CardWrapper>
+  );
+}
 
-export default Login
+export default Login;
