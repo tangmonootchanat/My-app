@@ -46,7 +46,8 @@ const Buttons = styled.button`
 interface Item {
   Id: number;
   Username: string;
-}
+};
+
 function Showdata() {
   const [data, setData] = useState<Item[]>([]);
   useEffect(() => {
@@ -58,18 +59,17 @@ function Showdata() {
       const response = await fetch('http://localhost:7000/test');
       if (!response.ok) {
         throw new Error('Network response was not ok');
-    }
-    const result = await response.json();
-    if (Array.isArray(result.data)) {
-      setData(result.data);
-    } else {
-      console.error('Invalid data format:', result);
-    }
-  } catch (error) {
-    console.error('Error fetching data:', error);
-  }
-  };
-
+      }
+      const result = await response.json();
+      if (Array.isArray(result.data)) {
+        setData(result.data);
+      } else {
+        console.error('Invalid data format:', result);
+      }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
 
   return (
     <TableContainer>
@@ -106,4 +106,4 @@ function Showdata() {
   );
 }
 
-export default Showdata
+export default Showdata;

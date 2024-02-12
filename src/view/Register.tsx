@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import Swal from 'sweetalert2';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 
 const ContainerWrapper = styled.body`
   margin-top: 16px;
@@ -17,6 +17,7 @@ const ContainerWrapper = styled.body`
   display: flex;
   justify-content: center;
 `;
+
 const ContainerText = styled.div`
   display: flex;
   justify-content: center;
@@ -24,6 +25,7 @@ const ContainerText = styled.div`
   font-size: 30px;
   margin-top: 10px;
 `;
+
 const ComponentInput = styled.div`
   display: flex;
   flex-direction: column;
@@ -31,6 +33,7 @@ const ComponentInput = styled.div`
   width: 250px;
   top: 20px;
 `;
+
 const StyledInput = styled.input`
   margin-top: 10px;
   font-size: 15px;
@@ -40,19 +43,23 @@ const StyledInput = styled.input`
   top: 20px;
   margin-bottom: 1px;
 `;
+
 const ButtonGroup = styled.div`
-  display: flex;
+  display: grid;
   justify-content: center;
   margin-top: 55px;
 `;
+
 const Labels = styled.label`
   font-size:15px;
   margin-top: 15px;
 `;
+
 const ButtonList = styled.div`
   display: flex;
   grid-gap: small;
 `;
+
 const Buttons = styled.button`
   background: #303f9f;
   width: 250px;
@@ -61,6 +68,7 @@ const Buttons = styled.button`
   border: none;
   color: #ffff;
 `;
+
 const ErrorMessage = styled.span`
   color: red;
   font-size: 12px;
@@ -68,18 +76,18 @@ const ErrorMessage = styled.span`
 `;
 
 function Register() {
-const navigate = useNavigate();
-const schema = yup
+  const navigate = useNavigate();
+  const schema = yup
     .object({
-     Username:yup.string().required(),
-     Password:yup.string().required(),
-     confirmPassword: yup.string()
+    Username:yup.string().required(),
+    Password:yup.string().required(),
+    confirmPassword: yup.string()
       .required()
       .oneOf([yup.ref('Password'), null as any],'Passwords do not match')
       .nullable(),
     })
     .required();
-const {
+  const {
     register,
     handleSubmit,
     formState: { errors }
@@ -87,86 +95,85 @@ const {
       resolver: yupResolver(schema)
     });
 
-function onError(error: any) {
-      console.log('error : ', error);
-    }
-async function onSubmit(item: any) {
-      try {
-        const response = await fetch('http://localhost:7000/register', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(item),
+  function onError(error: any) {
+    console.log('error : ', error);
+  }
+  async function onSubmit(item: any) {
+    try {
+      const response = await fetch('http://localhost:7000/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(item),
+      });
+  
+      const data = await response.json();
+  
+      if (response.ok) {
+        Swal.fire({
+          icon: 'success',
+          title: 'สำเร็จ',
+          text: 'สมัครสมาชิกสำเร็จ',
         });
-    
-        const data = await response.json();
-    
-        if (response.ok) {
-          Swal.fire({
-            icon: 'success',
-            title: 'สำเร็จ',
-            text: 'สมัครสมาชิกสำเร็จ',
-          });
-          navigate("/");
-        } else {
-          Swal.fire({
-            icon: 'error',
-            title: 'เกิดข้อผิดพลาด !',
-            text: data.error,
-          });
-        }
-      } catch (error) {
-        console.error('Error during API request:', error);
+        navigate("/");
+      } else {
         Swal.fire({
           icon: 'error',
-          title: 'เกิดข้อผิดพลาด!',
-          text: 'มีปัญหาในการติดต่อกับเซิร์ฟเวอร์',
+          title: 'เกิดข้อผิดพลาด !',
+          text: data.error,
         });
       }
+    } catch (error) {
+      console.error('Error during API request:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'เกิดข้อผิดพลาด!',
+        text: 'มีปัญหาในการติดต่อกับเซิร์ฟเวอร์',
+      });
     }
+  }
     
   
   
   return (
     <ContainerWrapper>
       <form onSubmit={handleSubmit(onSubmit,onError)}>
-          <ContainerText>Sing Up</ContainerText>
-          <ComponentInput>
-             <Labels>Username (Email)</Labels>
-             <StyledInput
-                id='Username'
-                type='Username'
-                placeholder='Username'
-                required
-                {...register('Username')}
-               />
-                {errors.Username && <ErrorMessage>{errors.Username.message}</ErrorMessage>}
-                <Labels>Password</Labels>
-             <StyledInput
-                id='Password'
-                type='Password'
-                placeholder='Password'
-                {...register('Password')}
-               />
-                {errors.Password && <ErrorMessage>{errors.Password.message}</ErrorMessage>}
-                <Labels>ConfirmPassword</Labels>
-             <StyledInput
-                id='confirmPassword'
-                type='Password'
-                placeholder='Confirmpassword'
-                {...register('confirmPassword')}
-               /> 
-              {errors.confirmPassword && typeof errors.confirmPassword.message === 'string' && (
-              <ErrorMessage>{errors.confirmPassword.message}</ErrorMessage>)}
-              </ComponentInput>
-              <ButtonGroup>
+        <ContainerText>Sing Up</ContainerText>
+        <ComponentInput>
+            <Labels>Username (Email)</Labels>
+            <StyledInput
+              id='Username'
+              type='Username'
+              placeholder='Username'
+              required
+              {...register('Username')}
+              />
+              {errors.Username && <ErrorMessage>{errors.Username.message}</ErrorMessage>}
+              <Labels>Password</Labels>
+            <StyledInput
+              id='Password'
+              type='Password'
+              placeholder='Password'
+              {...register('Password')}
+              />
+              {errors.Password && <ErrorMessage>{errors.Password.message}</ErrorMessage>}
+              <Labels>ConfirmPassword</Labels>
+            <StyledInput
+              id='confirmPassword'
+              type='Password'
+              placeholder='Confirmpassword'
+              {...register('confirmPassword')}
+              /> 
+            {errors.confirmPassword && typeof errors.confirmPassword.message === 'string' && (
+            <ErrorMessage>{errors.confirmPassword.message}</ErrorMessage>)}
+        </ComponentInput>
+        <ButtonGroup>
           <ButtonList>
             <Buttons type="submit">{"Sing Up"}</Buttons>
           </ButtonList>
         </ButtonGroup>
       </form>
-      
     </ContainerWrapper>
   );
 }
