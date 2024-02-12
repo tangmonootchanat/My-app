@@ -64,11 +64,16 @@ const Label = styled.label<LabelInterface>`
   `}
 `;
 
+const Links = styled.div`
+  display: flex;
+  grid-column-start: 2;
+  justify-content: center;
+`;
+
 const LinkBot = styled(Link)`
-  display: grid;
-  margin-top: 20px;
+  margin: 20px;
   text-align: center;
-  color: #666666;
+  color: #bfbfbf;
   text-decoration: none;
 `;
 
@@ -86,6 +91,12 @@ const Buttons = styled.button`
   border-radius: 5px;
   border: none;
   color: #ffff;
+`;
+
+const ErrorMessage = styled.span`
+  color: red;
+  font-size: 12px;
+  margin-top: 5px;
 `;
 
   function Login() {
@@ -161,9 +172,7 @@ const Buttons = styled.button`
           <TextWrapper>
             <Label isBold>Login</Label>
           </TextWrapper>
-          <form onSubmit={handleSubmit(onSubmit, onError)} 
-            action="http://localhost:7000/apis/creatLogin" 
-            method="post">
+          <form onSubmit={handleSubmit(onSubmit, onError)}>
             <CardForm>
               <Label htmlFor="Username">
                 Username (Email)
@@ -175,9 +184,7 @@ const Buttons = styled.button`
                 required
                 {...register('Username')}
               />
-               {errors.Username && (
-                  <span style={{ color: 'red' }}>{errors.Username.message}</span>
-                )}
+              {errors.Username && <ErrorMessage>{errors.Username.message}</ErrorMessage>}
               <Label htmlFor="Password">
                 Password
               </Label>
@@ -188,14 +195,15 @@ const Buttons = styled.button`
                 required
                 {...register('Password')}
               />
-              {errors.Password && (
-                <span style={{ color: 'red' }}>{errors.Password.message}</span>
-              )}
+              {errors.Password && <ErrorMessage>{errors.Password.message}</ErrorMessage>}
             </CardForm>
             <ButtonList>
               <Buttons type="submit">{"Login"}</Buttons>
             </ButtonList>
-            <LinkBot to = '/Register'>Create Account ?</LinkBot>
+            <Links>
+              <LinkBot to = '/Register'>Create Account ?</LinkBot>
+              {/* <LinkBot to = '/ForgetPassword'>Forget Password ?</LinkBot> */}
+            </Links>
           </form>
         </CardWrapper>
     );
